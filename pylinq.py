@@ -4,7 +4,7 @@ PyLINQ
 LINQ to python, based on http://jslinq.codeplex.com/.
 
 """
-from itertools import tee
+from itertools import tee, chain
 
 class PyLINQException(Exception):
     pass
@@ -17,7 +17,6 @@ def _check(clause):
 class PyLINQ(object):
     def __init__(self, items):
         self.__items = iter(items)
-        self._exitems = None
 
     def iteritems(self):
         self.__items, ret = tee(self.__items)
@@ -27,26 +26,26 @@ class PyLINQ(object):
         self.__items, ret = tee(self.__items)
         return list(ret)
 
-    def Where(self, clause):
+    def where(self, clause):
         _check(clause)
         return PyLINQ((e for e in self.iteritems() if clause(e)))
 
-    def Select(self, clause):
+    def select(self, clause):
         _check(clause)
         return PyLINQ((clause(e) for e in self.iteritems()))
 
-    def OrderBy(self, clause, cmp=None, order='asc'):
+    def order_by(self, clause, cmp=None, order='asc'):
         _check(clause)
         ls = sorted(self.iteritems(), key=clause, cmp=cmp, reverse=(order != 'asc'))
         return PyLINQ(ls)
 
-    def Count(self, clause=None):
+    def count(self, clause=None):
         if not clause:
             return len(self.items())
         else:
             return len([e for e in self.items() if clause(e)])
 
-    def Distinct(self, clause):
+    def distinct(self, clause):
         _check(clause)
         try:
             diselems = set(clause(x) for x in self.iteritems())
@@ -54,49 +53,49 @@ class PyLINQ(object):
         except TypeError, e:
             raise PyLINQException("clause should return a hashable item")
 
-    def Any(self, clause):
+    def any(self, clause):
         _check(clause)
         for x in self.iteritems():
             if clause(x):
                 return x
         return
 
-    def All(self, clause):
+    def all(self, clause):
         _check(clause)
         for x in self.iteritems():
             if not clause(x):
                 return False
         return True
 
-    def Reverse(self):
+    def reverse(self):
         return PyLINQ(self.items()[::-1])
 
     def _get_elem(self, clause, pos):
         if clause:
-            return self.Where(clause).First()
+            return self.where(clause).first()
         elist = self.items()
         return elist[pos] if elist else None
 
-    def First(self, clause=None):
+    def first(self, clause=None):
         return self._get_elem(0)
 
-    def Last(self, clause=None):
+    def last(self, clause=None):
         return self._get_elem(-1)
 
-    def ElementAt(self, index):
+    def elementAt(self, index):
         elist = self.items()
         return elist[index]
-    
-    def Concat(self, items):
-        return PyLINQ(self.items() + list(items))
 
-    def DefaultIfEmpty(self, default=None):
+    def concat(self, items):
+        return PyLINQ(chain(self.iteritems(), items))
+
+    def default_if_empty(self, default=None):
         default = default or []
         if not self.items():
             return default
         return self
 
-    def ElementAtOrDefault(self, index, defaultitem=None):
+    def elementat_or_default(self, index, defaultitem=None):
         try:
             elist = self.items()
             item = elist[index]
@@ -104,10 +103,10 @@ class PyLINQ(object):
         except IndexError:
             return defaultitem
 
-    def FirstOrDefault(self, defaultitem=None):
-        return self.First() or defaultitem
+    def first_or_default(self, defaultitem=None):
+        return self.first() or defaultitem
 
-    def LastOrDefault(self, defaultitem=None):
-        return self.Last() or defaultitem
+    def last_or_default(self, defaultitem=None):
+        return self.last() or defaultitem
 
 
