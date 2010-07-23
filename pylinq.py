@@ -16,14 +16,16 @@ def _check(clause):
 
 class PyLINQ(object):
     def __init__(self, items):
-        self.__items = items
+        self.__items = iter(items)
         self._exitems = None
 
     def iteritems(self):
-        return iter(tee(self.__items)[0])
+        self.__items, ret = tee(self.__items)
+        return ret
 
     def items(self):
-        return list(tee(self.__items)[0])
+        self.__items, ret = tee(self.__items)
+        return list(ret)
 
     def Where(self, clause):
         _check(clause)
