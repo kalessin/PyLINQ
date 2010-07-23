@@ -1,0 +1,5 @@
+PyLINQ 
+======
+
+Is a clone of JSLINQ but in Python. It's efficient cause use Iterators in almost
+all the functions. 
