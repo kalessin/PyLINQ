@@ -10,29 +10,29 @@ data = [
 
 class PyLINQTest(TestCase):
     def test1(self):
-        """Where/Select test"""
+        """where/select test"""
         pq = PyLINQ(data)
         self.assertEqual(
-            pq.Where(lambda it: it["class"] == "classA")
-            .Select(lambda it: {"name": it["name"], "size": it["size"]}).items(),
+            pq.where(lambda it: it["class"] == "classA")
+            .select(lambda it: {"name": it["name"], "size": it["size"]}).items(),
             [{"name": "item1", "size": 8},
              {"name": "item2", "size": 10}])
     def test2(self):
-        """OrderBy test"""
+        """order_by test"""
         pq = PyLINQ(data)
         self.assertEqual(
-            pq.Where(lambda it: it["size"] < 10)
-            .OrderBy(lambda it: it["size"])
-            .Select(lambda it: (it["name"], it["size"])).items(),
+            pq.where(lambda it: it["size"] < 10)
+            .order_by(lambda it: it["size"])
+            .select(lambda it: (it["name"], it["size"])).items(),
             [("item3", 6), ("item1", 8)])
 
     def test3(self):
-        """Count test with generator"""
+        """count test with generator"""
         pq = PyLINQ(iter(data))
         self.assertEqual(
-            pq.Where(lambda it: it["size"] < 10)
-            .Count(), 2)
+            pq.where(lambda it: it["size"] < 10)
+            .count(), 2)
         self.assertEqual(
-            pq.Where(lambda it: it["class"] == "classB")
-            .Count(), 1)
+            pq.where(lambda it: it["class"] == "classB")
+            .count(), 1)
 
