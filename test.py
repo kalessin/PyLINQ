@@ -10,6 +10,7 @@ data = [
 
 class PyLINQTest(TestCase):
     def test1(self):
+        """Where/Select test"""
         pq = PyLINQ(data)
         self.assertEqual(
             pq.Where(lambda it: it["class"] == "classA")
@@ -17,6 +18,7 @@ class PyLINQTest(TestCase):
             [{"name": "item1", "size": 8},
              {"name": "item2", "size": 10}])
     def test2(self):
+        """OrderBy test"""
         pq = PyLINQ(data)
         self.assertEqual(
             pq.Where(lambda it: it["size"] < 10)
@@ -25,10 +27,12 @@ class PyLINQTest(TestCase):
             [("item3", 6), ("item1", 8)])
 
     def test3(self):
-        pq = PyLINQ(data)
+        """Count test with generator"""
+        pq = PyLINQ(iter(data))
         self.assertEqual(
             pq.Where(lambda it: it["size"] < 10)
             .Count(), 2)
         self.assertEqual(
             pq.Where(lambda it: it["class"] == "classB")
             .Count(), 1)
+
