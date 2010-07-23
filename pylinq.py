@@ -4,6 +4,7 @@ PyLINQ
 LINQ to python, based on http://jslinq.codeplex.com/.
 
 """
+from itertools import tee
 
 class PyLINQException(Exception):
     pass
@@ -19,10 +20,10 @@ class PyLINQ(object):
         self._exitems = None
 
     def iteritems(self):
-        return iter(self.__items)
+        return iter(tee(self.__items)[0])
 
     def items(self):
-        return list(self.__items)
+        return list(tee(self.__items)[0])
 
     def Where(self, clause):
         _check(clause)

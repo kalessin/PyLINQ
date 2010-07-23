@@ -29,4 +29,6 @@ class PyLINQTest(TestCase):
         self.assertEqual(
             pq.Where(lambda it: it["size"] < 10)
             .Count(), 2)
-
+        self.assertEqual(
+            pq.Where(lambda it: it["class"] == "classB")
+            .Count(), 1)
