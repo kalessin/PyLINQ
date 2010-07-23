@@ -8,33 +8,30 @@ LINQ to python, based on http://jslinq.codeplex.com/.
 class PyLINQException(Exception):
     pass
 
+def _check(clause):
+    if not callable(clause):
+        raise PyLINQException("clause argument must be callable.")
+
 class PyLINQ(object):
     def __init__(self, items):
-        self.items = items
+        self.__items = items
 
-    def Items(self):
-        return self.items
+    def iteritems(self):
+        return iter(self.__items)
 
-    def toList(self):
-        return list(self.items)
+    def items(self):
+        return list(self.__items)
 
     def Where(self, clause):
-        it = iter(self.items)
-        if not callable(clause):
-            raise PyLINQException("caluse argument must be callable.")
-        return PyLINQ((e for e in it if clause(e)))
+        _check(clause)
+        return PyLINQ((e for e in self.iteritems() if clause(e)))
 
     def Select(self, clause):
-        it = iter(self.items)
-        if not callable(clause):
-            raise PyLINQException("caluse argument must be callable.")
-        return PyLINQ((e for e in it if clause(e)))
-
+        _check(clause)
+        return PyLINQ((clause(e) for e in self.iteritems()))
+    
     def OrderBy(self, clause, cmp=None, order='asc'):
-        it = iter(self.items)
-        if not callable(clause):
-            raise PyLINQException("caluse argument must be callable.")
-        ls = sorted(it, key=clause, cmp=cmp, reverse=(order != 'asc'))
+        _check(clause)
+        ls = sorted(self.iteritems(), key=clause, cmp=cmp, reverse=(order != 'asc'))
         return PyLINQ(ls)
-
 
