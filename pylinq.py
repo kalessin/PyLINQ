@@ -1,5 +1,5 @@
 """
-PyLINQ 
+PyLINQ
 
 LINQ to python, based on http://jslinq.codeplex.com/.
 
@@ -12,7 +12,6 @@ class PyLINQException(Exception):
 def _check(clause):
     if not callable(clause):
         raise PyLINQException("clause argument must be callable.")
-
 
 class PyLINQ(object):
     def __init__(self, items):
