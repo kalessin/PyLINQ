@@ -36,8 +36,3 @@ class PyLINQTest(TestCase):
             pq.Where(lambda it: it["class"] == "classB")
             .Count(), 1)
 
-    def test4(self):
-        pq = PyLINQ(data)
-        self.assertEqual(pq.Count(), 3)
-        self.assertEqual(pq.Count(), 3)
-        self.assertEqual(pq.Count(), 3)
