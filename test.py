@@ -23,3 +23,10 @@ class PyLINQTest(TestCase):
             .OrderBy(lambda it: it["size"])
             .Select(lambda it: (it["name"], it["size"])).items(),
             [("item3", 6), ("item1", 8)])
+
+    def test3(self):
+        pq = PyLINQ(data)
+        self.assertEqual(
+            pq.Where(lambda it: it["size"] < 10)
+            .Count(), 2)
+

@@ -37,13 +37,11 @@ class PyLINQ(object):
         ls = sorted(self.iteritems(), key=clause, cmp=cmp, reverse=(order != 'asc'))
         return PyLINQ(ls)
 
-
-
     def Count(self, clause=None):
         if not clause:
-            return len(self.toList())
+            return len(self.items())
         else:
-            return len([e for e in self.toList() if clause(e)])
+            return len([e for e in self.items() if clause(e)])
 
     def Distinct(self, clause):
         it = iter(self.items)
