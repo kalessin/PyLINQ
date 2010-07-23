@@ -15,7 +15,7 @@ def _check(clause):
 
 class PyLINQ(object):
     def __init__(self, items):
-        self.items = items
+        self.__items = items
         self._exitems = None
 
     def iteritems(self):
@@ -106,10 +106,10 @@ class PyLINQ(object):
         except IndexError:
             return defaultitem
 
-    def FirstOrDefault(self, defaultitem=None)
+    def FirstOrDefault(self, defaultitem=None):
         return self.First() or defaultitem
 
-    def LastOrDefault(sefl, defaultitem=None)
+    def LastOrDefault(sefl, defaultitem=None):
         return self.Last() or defaultitem
 
 
