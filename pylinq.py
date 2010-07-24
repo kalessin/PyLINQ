@@ -19,14 +19,11 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
-from itertools import tee, chain
-
-class PyLINQException(Exception):
-    pass
+from itertools import tee, chain, imap, ifilter
 
 def _check(clause):
     if not callable(clause):
-        raise PyLINQException("clause argument must be callable.")
+        raise TypeError("clause argument must be callable.")
 
 class PyLINQ(object):
     def __init__(self, items):
@@ -45,13 +42,13 @@ class PyLINQ(object):
     def where(self, clause):
         """return all items in collection for which clause returns true"""
         _check(clause)
-        return PyLINQ((e for e in self.iteritems() if clause(e)))
+        return PyLINQ(ifilter(clause, self.iteritems()))
 
     def select(self, clause):
         """returns new collection resultant of application of clause
         over each item in input collection"""
         _check(clause)
-        return PyLINQ(map(clause, self.iteritems()))
+        return PyLINQ(imap(clause, self.iteritems()))
 
     def order_by(self, clause, cmp=None, order='asc'):
         """returns new collection ordered by the result of clause over
@@ -65,15 +62,22 @@ class PyLINQ(object):
         if not clause:
             return len(self.items())
         else:
-            return len([e for e in self.items() if clause(e)])
+            return len(filter(clause, self.iteritems()))
 
     def distinct(self, clause):
+        """returns new collection mapped from input collection
+        by clause, but avoiding duplicates"""
         _check(clause)
-        try:
-            diselems = set(clause(x) for x in self.iteritems())
-            return PyLINQ(diselems)
-        except TypeError, e:
-            raise PyLINQException("clause should return a hashable item")
+        seen = set()
+        def _isnew(item):
+            try:
+                if not item in seen:
+                    seen.add(item)
+                    return True
+                return False
+            except:
+                raise TypeError("clause should return a hashable item")
+        return PyLINQ(ifilter(_isnew, imap(clause, self.iteritems())))
 
     def any(self, clause):
         _check(clause)

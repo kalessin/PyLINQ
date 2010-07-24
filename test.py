@@ -36,3 +36,9 @@ class PyLINQTest(TestCase):
             pq.where(lambda it: it["class"] == "classB")
             .count(), 1)
 
+    def test4(self):
+        """distinct test"""
+        pq = PyLINQ(data)
+        self.assertEqual(
+            pq.distinct(lambda x: x["class"]).items(),
+            ["classA", "classB"])
