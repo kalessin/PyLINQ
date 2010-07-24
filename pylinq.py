@@ -60,10 +60,10 @@ class PyLINQ(object):
     def count(self, clause=None):
         """returns the count of items in collection"""
         if not clause:
-            return len(self.items())
+            return sum(1 for _ in self.iteritems())
         else:
             _check(clause)
-            return len(filter(clause, self.iteritems()))
+            return sum(1 for _ in filter(clause, self.iteritems()))
 
     def distinct(self, clause):
         """returns new collection mapped from input collection
