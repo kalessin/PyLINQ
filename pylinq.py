@@ -62,6 +62,7 @@ class PyLINQ(object):
         if not clause:
             return len(self.items())
         else:
+            _check(clause)
             return len(filter(clause, self.iteritems()))
 
     def distinct(self, clause):
@@ -80,6 +81,7 @@ class PyLINQ(object):
         return PyLINQ(ifilter(_isnew, imap(clause, self.iteritems())))
 
     def any(self, clause):
+        """returns True if any element of the collection holds the clause"""
         _check(clause)
         for x in self.iteritems():
             if clause(x):
@@ -87,6 +89,8 @@ class PyLINQ(object):
         return
 
     def all(self, clause):
+        """returns True if all the elements of the collection holds the
+        clause"""
         _check(clause)
         for x in self.iteritems():
             if not clause(x):
@@ -94,45 +98,72 @@ class PyLINQ(object):
         return True
 
     def reverse(self):
-        return PyLINQ(self.items()[::-1])
-
-    def _get_elem(self, clause, pos):
-        if clause:
-            return self.where(clause).first()
-        elist = self.items()
-        return elist[pos] if elist else None
+        """returns a reversed collection"""
+        return PyLINQ(reversed(self.items()))
 
     def first(self, clause=None):
-        return self._get_elem(0)
+        """returns the first element of the collection"""
+        if clause:
+            _check(clause)
+            return self.where(clause).first()
+        try:
+            item = self.iteritems().next()
+            return item
+        except StopIteration:
+            return None
 
     def last(self, clause=None):
-        return self._get_elem(-1)
+        """returns the last element of the collection"""
+        if clause:
+            _check(clause)
+            return self.where(clause).first()
+        lastitem = None
+        try:
+            it = self.iteritems()
+            while 1:
+                lastitem = it.next()
+        except StopIteration:
+            return lastitem
 
-    def elementAt(self, index):
-        elist = self.items()
-        return elist[index]
+    def element_at(self, index):
+        """returns the element at position 'index'"""
+        if index < 0:
+            raise IndexError("index out of range")
+        it = self.iteritems()
+        try:
+            for _ in xrange(index):
+                it.next()
+            return it.next()
+        except StopIteration:
+            raise IndexError("index out of range")
 
     def concat(self, items):
+        """append collection to the final"""
         return PyLINQ(chain(self.iteritems(), items))
 
     def default_if_empty(self, default=None):
-        default = default or []
-        if not self.items():
-            return default
-        return self
-
-    def elementat_or_default(self, index, defaultitem=None):
+        """returns default if collection is empty, else itself"""
+        it = self.iteritems()
         try:
-            elist = self.items()
-            item = elist[index]
-            return item
+            it.next()
+            return self
+        except StopIteration:
+            return default or []
+
+    def element_at_or_default(self, index, default=None):
+        """returns the element at position 'index' or defaultitem in case
+        collection hasn't an item in that position."""
+        try:
+            return self.element_at(index)
         except IndexError:
-            return defaultitem
+            return default
 
-    def first_or_default(self, defaultitem=None):
-        return self.first() or defaultitem
+    def first_or_default(self, default=None):
+        """returns the first element or default"""
+        return self.first() or default
 
-    def last_or_default(self, defaultitem=None):
-        return self.last() or defaultitem
+    def last_or_default(self, default=None):
+        """returns the last element or default"""
+        return self.last() or default
 
 
