@@ -33,27 +33,35 @@ class PyLINQ(object):
         self.__items = iter(items)
 
     def iteritems(self):
+        """returns collection as generator"""
         self.__items, ret = tee(self.__items)
         return ret
 
     def items(self):
+        """returns collection as list"""
         self.__items, ret = tee(self.__items)
         return list(ret)
 
     def where(self, clause):
+        """return all items in collection for which clause returns true"""
         _check(clause)
         return PyLINQ((e for e in self.iteritems() if clause(e)))
 
     def select(self, clause):
+        """returns new collection resultant of application of clause
+        over each item in input collection"""
         _check(clause)
-        return PyLINQ((clause(e) for e in self.iteritems()))
+        return PyLINQ(map(clause, self.iteritems()))
 
     def order_by(self, clause, cmp=None, order='asc'):
+        """returns new collection ordered by the result of clause over
+        each item in input collection"""
         _check(clause)
         ls = sorted(self.iteritems(), key=clause, cmp=cmp, reverse=(order != 'asc'))
         return PyLINQ(ls)
 
     def count(self, clause=None):
+        """returns the count of items in collection"""
         if not clause:
             return len(self.items())
         else:
