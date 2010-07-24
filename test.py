@@ -54,8 +54,8 @@ class PyLINQTest(TestCase):
         """all test"""
         l = [1,3,5,7]
         pq = PyLINQ(iter(l))
-        self.assertTrue(pq.all(lambda x: x % 2 != 0))
-        self.assertFalse(pq.all(lambda x: x < 6))
+        self.assertEqual(pq.all(lambda x: x % 2 != 0), True)
+        self.assertEqual(pq.all(lambda x: x < 6), False)
 
     def test7(self):
         """reverse test"""

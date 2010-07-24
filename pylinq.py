@@ -89,10 +89,7 @@ class PyLINQ(object):
         """returns True if all the elements of the collection holds the
         clause"""
         _check(clause)
-        for x in self.iteritems():
-            if not clause(x):
-                return False
-        return True
+        return all(imap(clause, self.iteritems()))
 
     def reverse(self):
         """returns a reversed collection"""
