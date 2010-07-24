@@ -63,7 +63,7 @@ class PyLINQ(object):
             return sum(1 for _ in self.iteritems())
         else:
             _check(clause)
-            return sum(1 for _ in filter(clause, self.iteritems()))
+            return sum(1 for _ in ifilter(clause, self.iteritems()))
 
     def distinct(self, clause):
         """returns new collection mapped from input collection
