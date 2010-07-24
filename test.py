@@ -47,8 +47,8 @@ class PyLINQTest(TestCase):
         """any test"""
         l = [1,3,5,7,6]
         pq = PyLINQ(iter(l))
-        self.assertTrue(pq.any(lambda x: x % 2 == 0))
-        self.assertFalse(pq.any(lambda x: x == 0))
+        self.assertEqual(pq.any(lambda x: x % 2 == 0), True)
+        self.assertEqual(pq.any(lambda x: x == 0), False)
 
     def test6(self):
         """all test"""

@@ -82,11 +82,7 @@ class PyLINQ(object):
 
     def any(self, clause):
         """returns True if any element of the collection holds the clause"""
-        _check(clause)
-        for x in self.iteritems():
-            if clause(x):
-                return x
-        return
+        return any(ifilter(clause, self.iteritems()))
 
     def all(self, clause):
         """returns True if all the elements of the collection holds the
