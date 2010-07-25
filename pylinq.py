@@ -61,9 +61,8 @@ class PyLINQ(object):
         """returns the count of items in collection"""
         if not clause:
             return sum(1 for _ in self.iteritems())
-        else:
-            _check(clause)
-            return sum(1 for _ in ifilter(clause, self.iteritems()))
+        _check(clause)
+        return sum(1 for _ in ifilter(clause, self.iteritems()))
 
     def distinct(self, clause):
         """returns new collection mapped from input collection
@@ -98,7 +97,6 @@ class PyLINQ(object):
     def first(self, clause=None):
         """returns the first element of the collection"""
         if clause:
-            _check(clause)
             return self.where(clause).first()
         try:
             item = self.iteritems().next()
@@ -109,15 +107,8 @@ class PyLINQ(object):
     def last(self, clause=None):
         """returns the last element of the collection"""
         if clause:
-            _check(clause)
-            return self.where(clause).first()
-        lastitem = None
-        try:
-            it = self.iteritems()
-            while 1:
-                lastitem = it.next()
-        except StopIteration:
-            return lastitem
+            return self.where(clause).last()
+        return reduce(lambda _, y: y, self.iteritems())
 
     def element_at(self, index):
         """returns the element at position 'index'"""

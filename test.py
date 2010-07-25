@@ -69,6 +69,10 @@ class PyLINQTest(TestCase):
         pq = PyLINQ(iter(gen))
         self.assertEqual(pq.first(), "h")
         self.assertEqual(pq.last(), "o")
+        l = range(10)
+        pq = PyLINQ(l)
+        self.assertEqual(pq.last(lambda x: x < 4), 3)
+        self.assertEqual(pq.first(lambda x: x > 7), 8)
 
     def test9(self):
         """element_at test"""
