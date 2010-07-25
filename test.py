@@ -82,6 +82,7 @@ class PyLINQTest(TestCase):
         self.assertEqual(pq.element_at(1), 200)
         self.assertEqual(pq.element_at(2), 300)
         self.assertRaises(IndexError, pq.element_at, 50)
+        self.assertRaises(IndexError, pq.element_at, -2)
 
     def test10(self):
         """concat test"""

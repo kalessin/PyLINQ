@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
-from itertools import tee, chain, imap, ifilter
+from itertools import tee, chain, imap, ifilter, islice
 
 def _check(clause):
     if not callable(clause):
@@ -111,16 +111,13 @@ class PyLINQ(object):
         return ret
 
     def element_at(self, index):
-        """returns the element at position 'index'"""
-        if index < 0:
-            raise IndexError("index out of range")
-        it = self.iteritems()
+        """returns the element at position 'index'""" 
         try:
-            for _ in xrange(index):
-                it.next()
-            return it.next()
-        except StopIteration:
-            raise IndexError("index out of range")
+            for i in islice(self.iteritems(), index, None):
+                return i
+        except ValueError, StopIteration:
+            pass
+        raise IndexError("index out of range")
 
     def concat(self, items):
         """append collection to the final"""
