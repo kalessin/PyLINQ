@@ -125,12 +125,9 @@ class PyLINQ(object):
 
     def default_if_empty(self, default=None):
         """returns default if collection is empty, else itself"""
-        it = self.iteritems()
-        try:
-            it.next()
+        for _ in self.iteritems():
             return self
-        except StopIteration:
-            return default or []
+        return default or []
 
     def element_at_or_default(self, index, default=None):
         """returns the element at position 'index' or defaultitem in case

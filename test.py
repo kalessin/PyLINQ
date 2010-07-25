@@ -98,6 +98,7 @@ class PyLINQTest(TestCase):
         self.assertEqual(pq.default_if_empty().items(), [1, 2])
         pq = PyLINQ([])
         self.assertEqual(pq.default_if_empty(), [])
+        self.assertEqual(pq.default_if_empty([3]), [3])
 
     def test12(self):
         """element_at_or_default test"""
