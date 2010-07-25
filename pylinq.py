@@ -98,11 +98,8 @@ class PyLINQ(object):
         """returns the first element of the collection"""
         if clause:
             return self.where(clause).first()
-        try:
-            item = self.iteritems().next()
-            return item
-        except StopIteration:
-            return None
+        for i in self.iteritems():
+            return i
 
     def last(self, clause=None):
         """returns the last element of the collection"""
