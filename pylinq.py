@@ -108,10 +108,10 @@ class PyLINQ(object):
         """returns the last element of the collection"""
         if clause:
             return self.where(clause).last()
-        try:
-            return reduce(lambda _, y: y, self.iteritems())
-        except TypeError: # if self.iteritems() is empty
-            return None
+        ret = None
+        for ret in self.iteritems():
+            pass
+        return ret
 
     def element_at(self, index):
         """returns the element at position 'index'"""
