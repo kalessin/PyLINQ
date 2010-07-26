@@ -19,11 +19,19 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
+from inspect import getargspec
+import operator
 from itertools import tee, chain, imap, ifilter, islice
 
-def _check(clause):
+def _check(clause, cond_arity=None):
     if not callable(clause):
         raise TypeError("clause argument must be callable.")
+    if cond_arity is not None:
+        args, _, _, _ = getargspec(clause)
+        if len(args) != cond_arity:
+            msg = "clause function should have %s arguments" % cond_arity
+            raise ValueError(msg)
+        
 
 class PyLINQ(object):
     def __init__(self, items):
@@ -33,6 +41,9 @@ class PyLINQ(object):
         """returns collection as generator"""
         self.__items, ret = tee(self.__items)
         return ret
+
+    def __iter__(self):
+        return self.iteritems()
 
     def items(self):
         """returns collection as list"""
@@ -145,4 +156,43 @@ class PyLINQ(object):
         """returns the last element or default"""
         return self.last() or default
 
+    def aggregate(self, clause, start_value=None):
+        """returns the aggregated value over the collection folding the
+        items"""
+        # clause arity function should be 2
+        _check(clause, cond_arity=2)
+        return reduce(clause, self.iteritems(), start_value)
+
+    def sum(self, clause=None):
+        """returns the sum of the elements of the collection
+        clause - should returns a numeric value
+        """ 
+        if clause:
+            _check(clause)
+            return sum(imap(clause, self.iteritems()))
+        return sum(self.iteritems())
+
+    def average(self, clause=None):
+        """returns the average of the collection.
+        clause - should returns a numeric value
+        """
+        return self.sum(clause)/self.count()
+
+    def max(self, clause=None):
+        """returns the max element of the collection
+        clause - should returns a sortable value
+        """
+        if clause:
+            _check(clause)
+            return max(imap(clause, self.iteritems()))
+        return max(self.iteritems())
+
+    def min(self, clause=None):
+        """returns the min element of the collection
+        clause - should returns a sortable value
+        """
+        if clause:
+            _check(clause)
+            return min(imap(clause, self.iteritems()))
+        return min(self.iteritems())
 
