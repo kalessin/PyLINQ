@@ -23,15 +23,9 @@ from inspect import getargspec
 import operator
 from itertools import tee, chain, imap, ifilter, islice
 
-def _check(clause, cond_arity=None):
+def _check(clause):
     if not callable(clause):
         raise TypeError("clause argument must be callable.")
-    if cond_arity is not None:
-        args, _, _, _ = getargspec(clause)
-        if len(args) != cond_arity:
-            msg = "clause function should have %s arguments" % cond_arity
-            raise ValueError(msg)
-        
 
 class PyLINQ(object):
     def __init__(self, items):
@@ -158,9 +152,16 @@ class PyLINQ(object):
 
     def aggregate(self, clause, start_value=None):
         """returns the aggregated value over the collection folding the
-        items"""
+        items. clause is a a function of two arguments cumulatively to
+        the items of a sequence, from left to right, so as to reduce
+        the sequence to a single value.
+        For example, if p=PyLINQ( [1, 2, 3, 4, 5]),
+        p.aggregate(lambda x, y: x+y) calculates ((((1+2)+3)+4)+5).
+        If initial is present, it is placed before the items
+        of the sequence in the calculation, and serves as a default when the
+        sequence is empty."""
         # clause arity function should be 2
-        _check(clause, cond_arity=2)
+        _check(clause)
         if start_value is not None:
             return reduce(clause, self.iteritems(), start_value)
         return reduce(clause, self.iteritems())
@@ -178,7 +179,7 @@ class PyLINQ(object):
         """returns the average of the collection.
         clause - should returns a numeric value
         """
-        return self.sum(clause)/self.count()
+        return self.sum(clause)/self.count(clause)
 
     def max(self, clause=None):
         """returns the max element of the collection
