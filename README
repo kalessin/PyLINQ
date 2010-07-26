@@ -1,5 +1,11 @@
 PyLINQ 
 ======
 
-Is a clone of JSLINQ but in Python. It's efficient cause use Iterators in almost
-all the functions. 
+PyLINQ it's a pure python port of the Microsoft LINQ project
+(http://msdn.microsoft.com/en-us/netframework/aa904594.aspx). 
+
+The library provide a completly set of the functions defined by the microsoft
+linq api.
+
+
+
