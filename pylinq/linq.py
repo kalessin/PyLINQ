@@ -161,7 +161,9 @@ class PyLINQ(object):
         items"""
         # clause arity function should be 2
         _check(clause, cond_arity=2)
-        return reduce(clause, self.iteritems(), start_value)
+        if start_value is not None:
+            return reduce(clause, self.iteritems(), start_value)
+        return reduce(clause, self.iteritems())
 
     def sum(self, clause=None):
         """returns the sum of the elements of the collection
