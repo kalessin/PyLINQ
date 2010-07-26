@@ -19,8 +19,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
-from inspect import getargspec
-import operator
 from itertools import tee, chain, imap, ifilter, islice
 
 def _check(clause):
@@ -179,7 +177,7 @@ class PyLINQ(object):
         """returns the average of the collection.
         clause - should returns a numeric value
         """
-        return self.sum(clause)/self.count(clause)
+        return self.sum(clause)/self.count()
 
     def max(self, clause=None):
         """returns the max element of the collection
@@ -187,7 +185,14 @@ class PyLINQ(object):
         """
         if clause:
             _check(clause)
-            return max(imap(clause, self.iteritems()))
+            current = None
+            cmax = None
+            for elem in self.iteritems():
+                nmax = clause(elem)
+                if cmax is None or cmax < nmax:
+                    cmax = nmax
+                    current = elem
+            return current
         return max(self.iteritems())
 
     def min(self, clause=None):
@@ -196,6 +201,13 @@ class PyLINQ(object):
         """
         if clause:
             _check(clause)
-            return min(imap(clause, self.iteritems()))
+            current = None
+            cmin = None
+            for elem in self.iteritems():
+                nmin = clause(elem)
+                if cmin is None or cmin > nmin:
+                    cmin = nmin
+                    current = elem
+            return current
         return min(self.iteritems())
 
