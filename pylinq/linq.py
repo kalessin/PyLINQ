@@ -19,7 +19,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 """
-from itertools import tee, chain, imap, ifilter, islice
+from itertools import tee, chain, imap, ifilter, islice, product
+
+def identity(x):
+    return x
 
 def _check(clause):
     if not callable(clause):
@@ -185,8 +188,7 @@ class PyLINQ(object):
         """
         if clause:
             _check(clause)
-            current = None
-            cmax = None
+            current = cmax = None
             for elem in self.iteritems():
                 nmax = clause(elem)
                 if cmax is None or cmax < nmax:
@@ -201,8 +203,7 @@ class PyLINQ(object):
         """
         if clause:
             _check(clause)
-            current = None
-            cmin = None
+            current = cmin = None
             for elem in self.iteritems():
                 nmin = clause(elem)
                 if cmin is None or cmin > nmin:
@@ -210,4 +211,19 @@ class PyLINQ(object):
                     current = elem
             return current
         return min(self.iteritems())
+
+    def contains(self, item, cmpfun=cmp):
+        """returns True if the element is in the collection"""
+        _check(cmpfun)
+        for elem in self.iteritems():
+            if not cmpfun(item, elem):
+                return True
+        return False
+
+    def intersect(self, items, cmpfun=cmp):
+        """returns the intersection of both collections"""
+        _check(cmpfun)
+        items = (elem1 for elem1, elem2 in product(self.iteritems(), items)
+                 if not cmpfun(elem1, elem2))
+        return PyLINQ(items)
 

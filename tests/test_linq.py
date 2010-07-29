@@ -163,3 +163,48 @@ class PyLINQTest(TestCase):
         self.assertEqual(PyLINQ(l).min()["name"], "jose")
         self.assertEqual(PyLINQ(["a", "d", "z"]).min(), "a")
 
+    def test20(self):
+        """test 20: contains test"""
+        l = [
+            {"name": "andres", "age" : 27},
+            {"name": "martin", "age" : 35},
+            {"name": "jose", "age" : 20}
+        ]
+
+        item = {"name": "andres", "age" : 27}
+
+        def cmpfun(a, b):
+            return cmp(a["name"], b["name"])
+
+        self.assertTrue(PyLINQ(iter(l)).contains(item, cmpfun=cmpfun))
+
+        item = {"name": "mark", "age" : 30}
+        self.assertFalse(PyLINQ(iter(l)).contains(item, cmpfun=cmpfun))
+
+    def test21(self):
+        """test 21: intersect test"""
+        l1 = [
+            {"name": "andres", "age" : 27},
+            {"name": "martin", "age" : 35},
+            {"name": "jose", "age" : 20},
+            {"name": "mark", "age" : 30},
+        ]
+        l2 = [
+            {"name": "andres", "age" : 27},
+            {"name": "mark", "age" : 30}
+        ]
+
+        def cmpfun(a, b):
+            return cmp(a["name"], b["name"])
+
+        l3 = PyLINQ(iter(l1)).intersect(l2, cmpfun=cmpfun).items()
+        self.assertEqual(set((i["name"],i["age"]) for i in l3),
+                         set([("andres", 27), ("mark", 30)]))
+
+        l4 = PyLINQ(iter(l1)).intersect([]).items()
+        self.assertEqual(l4, [])
+
+        l5 = PyLINQ(iter(l2)).intersect(iter(l2), cmpfun=cmpfun).items()
+        self.assertEqual(set((i["name"],i["age"]) for i in l5),
+                         set([("andres", 27), ("mark", 30)]))
+
